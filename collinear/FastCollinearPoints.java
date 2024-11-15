@@ -16,8 +16,8 @@ public class FastCollinearPoints {
                throw new IllegalArgumentException("Illegal argument ");
            }
 
-           int Arr_len = points.length;
-           for (int i = 0; i < Arr_len; i++) {
+           int arr_len = points.length;
+           for (int i = 0; i < arr_len; i++) {
                if (points[i] == null) {
                    throw new IllegalArgumentException("Illegal array argument");
                }
@@ -26,7 +26,7 @@ public class FastCollinearPoints {
            Point dup[] = points.clone();
            Arrays.sort(dup);
 
-           for (int i = 0; i < Arr_len - 1; i++) {
+           for (int i = 0; i < arr_len - 1; i++) {
                if (dup[i].slopeTo(dup[i + 1]) == Double.NEGATIVE_INFINITY) {
                    throw new IllegalArgumentException("array contains a repeated point");
                }
@@ -34,22 +34,38 @@ public class FastCollinearPoints {
 
            segm_count = 0;
            Queue<LineSegment> line_q = new LinkedList<LineSegment>();
-           for (int i = 0; i < (Arr_len - 3); i++) {
-               for (int j = i + 1; j < (Arr_len - 2); j++) {
-                   for (int m = j + 1; m < (Arr_len - 1); m++) {
-                       if (dup[i].slopeTo(dup[j]) != dup[i].slopeTo(dup[m])) {
-                           continue;
-                       }
-                       for (int n = m + 1; n < Arr_len; n++) {
-                           if (dup[i].slopeTo(dup[j]) == dup[i].slopeTo(dup[n])) {
-                               segm_count++;
-                               LineSegment tmp = new LineSegment(dup[i], dup[n]); 
-                               line_q.add(tmp);
+           for (int i = 0; i < arr_len ; i++) {
+               Arrays.sort(dup, points[i].slopeOrder());
+               int orig_head = 1;
+               int tail = orig_head + 1;
+               while (tail < arr_len) {
+                   double headSlope = points[i].slopeTo(dup[orig_head]);
+                   while(tail < arr_len && headSlope == points[i].slopeTo(dup[tail])) {
+                        tail++;             
+                   }
+
+                   if (tail - orig_head >= 3) {
+                       boolean greathFl = true;
+                       Point max = new Point(-32768, -32768);
+                       for (int j = orig_head; j < tail; j++ ) {
+                           if (points[i].compareTo(dup[j]) > 0) {
+                               greathFl = false;
+                               break;
+                           }
+                           if (dup[j].compareTo(max) > 0) {
+                               max = dup[j];
                            }
                        }
+                       if (greathFl) {
+                           line_q.add(new LineSegment(points[i], max));
+                           segm_count++;
+                       }
                    }
+                   orig_head = tail;
+                   tail++;
                }
            }
+
            line = new LineSegment[segm_count];
            for (int i = 0; i < segm_count; i++) {
                line[i] = line_q.remove();
