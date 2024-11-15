@@ -7,5 +7,5 @@ collinear/*.class
 collinear/*.txt
 collinear/*.png
 collinear/Algorithms, Part I.iml
-.*
+.idea
 collinear/.*
