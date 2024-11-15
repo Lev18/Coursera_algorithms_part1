@@ -1,0 +1,11 @@
+*.zip
+hello  
+Module5  
+percolation
+queues
+collinear/*.class
+collinear/*.txt
+collinear/*.png
+collinear/Algorithms, Part I.iml
+.*
+collinear/.*
